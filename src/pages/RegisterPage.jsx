@@ -1,33 +1,39 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import api from '../services/api';
-import { Link } from 'react-router-dom';
 
-function LoginPage() {
+function RegisterPage() {
+    const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
 
-    const handleLogin = async (e) => {
+    const handleRegister = async (e) => {
         e.preventDefault();
         try {
-            // On appelle l'API de Kamela
-            const response = await api.post('/auth/login', { email, password });
+            
+            await api.post('/auth/register', { username, email, password });
 
-            // On sauvegarde le token reçu dans le navigateur
-            localStorage.setItem('token', response.data.token);
-
-            // On redirige vers le Dashboard
-            navigate('/');
+            alert("Compte créé avec succès ! Connecte-toi maintenant.");
+            navigate('/login');
         } catch (error) {
-            alert("Erreur de connexion : " + error.response?.data?.message || "Serveur injoignable");
+            alert("Erreur lors de l'inscription : " + (error.response?.data?.message || "Serveur injoignable"));
         }
     };
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-50">
-            <form onSubmit={handleLogin} className="p-10 bg-white rounded-xl shadow-lg border border-gray-100 w-full max-w-md">
-                <h2 className="text-3xl font-bold text-indigo-600 mb-6 text-center">Connexion</h2>
+            <form onSubmit={handleRegister} className="p-10 bg-white rounded-xl shadow-lg border border-gray-100 w-full max-w-md">
+                <h2 className="text-3xl font-bold text-indigo-600 mb-6 text-center">Inscription</h2>
+
+                <input
+                    type="text"
+                    placeholder="Nom d'utilisateur"
+                    className="w-full p-3 mb-4 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    required
+                />
                 <input
                     type="email"
                     placeholder="Email"
@@ -44,16 +50,17 @@ function LoginPage() {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                 />
+
                 <button type="submit" className="w-full bg-indigo-600 text-white p-3 rounded-lg font-bold hover:bg-indigo-700 transition">
-                    Se connecter
+                    Créer mon compte
                 </button>
+
                 <p className="mt-4 text-center text-sm text-gray-600">
-                    Pas encore de compte ? <Link to="/register" className="text-indigo-600 hover:underline">S'inscrire</Link>
+                    Déjà un compte ? <Link to="/login" className="text-indigo-600 hover:underline">Se connecter</Link>
                 </p>
             </form>
         </div>
     );
-    
 }
 
-export default LoginPage;
+export default RegisterPage;
