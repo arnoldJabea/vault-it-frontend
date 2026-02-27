@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 function LoginPage() {
     const [email, setEmail] = useState('');
@@ -11,16 +12,16 @@ function LoginPage() {
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
-            // On appelle l'API de Kamela
+            
             const response = await api.post('/auth/login', { email, password });
 
-            // On sauvegarde le token reçu dans le navigateur
+           
             localStorage.setItem('token', response.data.token);
 
-            // On redirige vers le Dashboard
+            
             navigate('/');
         } catch (error) {
-            alert("Erreur de connexion : " + error.response?.data?.message || "Serveur injoignable");
+            toast.error("Identifiants incorrects ou serveur éteint ❌");
         }
     };
 
