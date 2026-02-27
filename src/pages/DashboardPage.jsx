@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import AddResourceModal from '../components/AddResourceModal';
 import { getResources } from '../services/resourceService'; 
+import { toast } from 'react-toastify';
 
 function DashboardPage() {
     const [resources, setResources] = useState([]); 
@@ -16,11 +17,11 @@ function DashboardPage() {
     const fetchData = async () => {
         try {
             setLoading(true);
-            const response = await getResources(); 
-            setResources(response.data); e
+            const response = await getResources();
+            setResources(response.data);
         } catch (error) {
             console.error("Erreur lors de la récupération :", error);
-            alert("Impossible de charger les ressources. Vérifie si l'API de Kamela est lancée !");
+            toast.error("Impossible de charger les ressources. Vérifie si l'API de Kamela est lancée !");
         } finally {
             setLoading(false);
         }

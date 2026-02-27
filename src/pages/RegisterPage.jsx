@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../services/api';
+import { toast } from 'react-toastify';
 
 function RegisterPage() {
     const [username, setUsername] = useState('');
@@ -14,10 +15,10 @@ function RegisterPage() {
             
             await api.post('/auth/register', { username, email, password });
 
-            alert("Compte créé avec succès ! Connecte-toi maintenant.");
+            toast.success("Compte créé avec succès ! Connecte-toi maintenant.");
             navigate('/login');
         } catch (error) {
-            alert("Erreur lors de l'inscription : " + (error.response?.data?.message || "Serveur injoignable"));
+            toast.error("Erreur lors de l'inscription : " + (error.response?.data?.message || "Serveur injoignable"));
         }
     };
 
