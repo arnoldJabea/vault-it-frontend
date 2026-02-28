@@ -133,16 +133,176 @@ npm run test     # Tests Vitest
 
 ## ✅ Tests
 
-Tests avec Vitest et React Testing Library.
+Tests avec **Vitest** et **React Testing Library** pour assurer la qualité du code frontend.
+
+### 🚀 Lancer les tests
 
 ```bash
-npm run test
+npm run test              # Exécute tous les tests (une fois)
+npm run test -- --watch  # Mode watch : réexécute auto à chaque changement
+npm run test -- --ui     # Ouvre l'UI Vitest pour une meilleure visualisation
+npm run test -- --coverage  # Génère un rapport de couverture de code
 ```
 
-Fichiers de tests :
-- `src/__tests__/LoginPage.test.jsx` - Tests page connexion
-- `src/__tests__/Dashboard.test.jsx` - Tests tableau de bord
-- `src/__tests__/AddResourceModal.test.jsx` - Tests modal
+### 📊 Fichiers de tests et couverture
+
+| Fichier | Tests | Détails |
+|---------|-------|---------|
+| **LoginPage.test.jsx** | 6 | Formulaire connexion, validation, erreurs |
+| **RegisterPage.test.jsx** | 7 | Formulaire inscription, validation, erreurs |
+| **Navbar.test.jsx** | 8 | Navigation, déconnexion, accessibilité |
+| **Dashboard.test.jsx** | ? | Affichage ressources, chargement |
+| **AddResourceModal.test.jsx** | ? | Modal, soumission, validation |
+| **resourceService.test.js** | 8+ | Appels API (GET/POST), gestion erreurs |
+| **TOTAL** | **38+** | **Couverture complète du frontend** |
+
+### 🧪 Détails des tests par domaine
+
+#### **Tests d'authentification (LoginPage - 6 tests)**
+```
+✓ Affiche le formulaire de connexion avec email et password
+✓ Met à jour les champs de saisie dynamiquement
+✓ Soumet le formulaire avec identifiants corrects
+✓ Sauvegarde le token dans localStorage après succès
+✓ Affiche erreur si email/password incorrect
+✓ Valide que les champs sont requis
+```
+
+**Cas testés :** Rendu, interaction, API, erreurs, validation
+
+---
+
+#### **Tests d'inscription (RegisterPage - 7 tests)**
+```
+✓ Affiche le formulaire d'inscription complet
+✓ Valide la saisie des trois champs (username, email, password)
+✓ Soumet les données au serveur correctement
+✓ Affiche succès et redirige vers login
+✓ Gère l'erreur "email déjà utilisé" (400)
+✓ Gère l'erreur serveur injoignable (500)
+✓ Requiert tous les champs obligatoires
+```
+
+**Cas testés :** Formulaire, création compte, erreurs serveur, validation
+
+---
+
+#### **Tests de navigation (Navbar - 8 tests)**
+```
+✓ Affiche le logo "VAULT-IT"
+✓ Affiche le bouton "+ Ajouter"
+✓ Affiche le bouton "Déconnexion"
+✓ Appelle onAddClick quand on clique sur Ajouter
+✓ Supprime le token du localStorage en déconnexion
+✓ Redirige vers /login après déconnexion
+✓ Logo est un lien fonctionnel vers /
+✓ Les boutons sont accessibles au clavier
+```
+
+**Cas testés :** UI, interactions, localStorage, navigation, accessibilité
+
+---
+
+#### **Tests des services API (resourceService - 8+ tests)**
+```
+✓ getResources() - Appelle GET /resources
+✓ getResources() - Retourne structure correcte
+✓ getResources() - Gère erreurs API 500
+✓ getResources() - Retourne tableau vide si zéro ressource
+✓ createResource() - Appelle POST /resources
+✓ createResource() - Retourne ressource créée avec ID
+✓ createResource() - Gère erreur 400 (validation)
+✓ createResource() - Gère erreur 401 (non authentifié)
+```
+
+**Cas testés :** Requêtes HTTP, réponses, gestion erreurs, intégration API
+
+---
+
+### 📝 Écrire un nouveau test
+
+**Template simple :**
+```javascript
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import MyComponent from '../path/MyComponent';
+
+describe('MyComponent', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('affiche le titre', () => {
+    render(<MyComponent />);
+    expect(screen.getByText('Mon Titre')).toBeInTheDocument();
+  });
+
+  it('clique et change l\'état', async () => {
+    render(<MyComponent />);
+    fireEvent.click(screen.getByRole('button', { name: /cliquez/i }));
+    
+    await waitFor(() => {
+      expect(screen.getByText('Après clique')).toBeInTheDocument();
+    });
+  });
+});
+```
+
+### 🔍 Sélecteurs (du meilleur au pire)
+
+```javascript
+// ✅ MEILLEUR - Sémantique
+screen.getByRole('button', { name: /submit/i })
+
+// ✅ BON - Accessibilité
+screen.getByPlaceholderText('Email')
+screen.getByLabelText('Password')
+
+// ✅ ACCEPTABLE - Texte visible
+screen.getByText('Welcome')
+
+// ❌ À ÉVITER - Implémentation
+screen.getByTestId('btn-submit')
+wrapper.find('.button')
+container.querySelector('#id')
+```
+
+### 🎯 Bonnes pratiques
+
+| ✅ À FAIRE | ❌ À ÉVITER |
+|-----------|-----------|
+| Tester le comportement utilisateur | Tester l'implémentation |
+| `screen.getByRole()` | `getByTestId()` |
+| Un test = une responsabilité | Tester 10 choses à la fois |
+| Noms clairs : `affiche erreur` | Noms vagues : `test 1` |
+| Mock les appels API | Vrais appels réseau |
+| `await waitFor()` pour async | `setTimeout()` aléatoires |
+
+### 📈 Couverture
+
+```bash
+npm run test -- --coverage
+```
+
+Cela génère un rapport HTML dans `coverage/index.html` avec :
+- % de couverture par fichier
+- Lignes non testées en détail
+- Objectif : 80%+ sur code critique
+
+### 🐛 Déboguer
+
+**Afficher le HTML rendu :**
+```javascript
+it('mon test', () => {
+  render(<MyComponent />);
+  screen.debug(); // Affiche le HTML dans la console
+});
+```
+
+**Voir tous les sélecteurs accessibles :**
+```javascript
+screen.logTestingPlaygroundURL();
+```
 
 ---
 
