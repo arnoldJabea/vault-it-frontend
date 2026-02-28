@@ -12,16 +12,16 @@ function LoginPage() {
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
-            
             const response = await api.post('/auth/login', { email, password });
 
            
-            localStorage.setItem('token', response.data.token);
-
-            
-            navigate('/');
+            if (response.data.token) {
+                localStorage.setItem('token', response.data.token);
+                toast.success(`Ravi de vous revoir !`);
+                navigate('/');
+            }
         } catch (error) {
-            toast.error("Identifiants incorrects ou serveur éteint ❌");
+            toast.error(error.response?.data?.message || "Erreur de connexion");
         }
     };
 

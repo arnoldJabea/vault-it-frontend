@@ -18,7 +18,7 @@ function DashboardPage() {
         try {
             setLoading(true);
             const response = await getResources();
-            setResources(response.data);
+            setResources(response.data.data);
         } catch (error) {
             console.error("Erreur lors de la récupération :", error);
             toast.error("Impossible de charger les ressources. Vérifie si l'API de Kamela est lancée !");
@@ -42,7 +42,7 @@ function DashboardPage() {
                 ) : resources.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {resources.map((resource) => (
-                            <div key={resource._id} className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                            <div key={resource.id} className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
                                 <span className="text-xs font-semibold uppercase px-2 py-1 bg-indigo-100 text-indigo-700 rounded-full">
                                     {resource.category}
                                 </span>
