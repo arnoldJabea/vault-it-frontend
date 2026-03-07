@@ -15,13 +15,13 @@ function LoginPage() {
             const response = await api.post('/auth/login', { email, password });
 
            
-            if (response.data.token) {
-                localStorage.setItem('token', response.data.token);
-                toast.success(`Ravi de vous revoir !`);
-                navigate('/');
-            }
-        } catch (error) {
-            toast.error(error.response?.data?.message || "Erreur de connexion");
+            localStorage.setItem('token', response.data.token);
+            localStorage.setItem('user', JSON.stringify(response.data.user));
+
+            
+            navigate('/');
+        } catch {
+            toast.error("Identifiants incorrects ou serveur éteint ❌");
         }
     };
 
