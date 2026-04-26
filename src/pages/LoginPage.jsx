@@ -14,10 +14,8 @@ function LoginPage() {
         try {
             const response = await api.post('/auth/login', { email, password });
 
-           
             localStorage.setItem('token', response.data.token);
             localStorage.setItem('user', JSON.stringify(response.data.user));
-
             
             navigate('/');
         } catch {
